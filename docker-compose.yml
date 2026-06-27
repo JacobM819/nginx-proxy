@@ -1,0 +1,29 @@
+services:
+  nginx-proxy:
+    image: nginx:latest
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - jakeys_net
+      - jakeys_lab
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    command: tunnel --loglevel info --no-autoupdate run
+    restart: always
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    networks:
+      - jakeys_net
+      - jakeys_lab
+
+networks:
+  jakeys_net:
+    external: true
+  jakeys_lab:
+    external: true
